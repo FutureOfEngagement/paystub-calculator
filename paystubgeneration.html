@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pay Stub Generator</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <h1>Pay Stub Generator</h1>
+    <label for="employeeNameLabel">Employee Name:</label>
+    <input type="text" id="employeeName" />
+
+    <label for="positionLabel">Choose a position:</label>
+
+    <select name="position" id="position">
+      <option value="fundraising">Fundraising</option>
+      <option value="softwareDeveloper">Software Developer</option>
+      <option value="researchSupport">Research Support</option>
+      <option value="socialMedia">Social Media</option>
+      <option value="commCoordinator">Comm Coordinator</option>
+      <option value="commOrganizer">Comm Organizer</option>
+      <option value="editor">Editor</option>
+      <option value="director">Director</option>
+      <option value="rso">RSO</option>
+      <option value="interiorDesigner">Interior Designer</option>
+    </select>
+    <label for="hoursWorkedLabel">Hours Worked: </label>
+    <input type="text" id="hoursWorked" />
+
+    <button class="calculateButton" id="calculateButton">Calculate Pay</button>
+
+    <div id="payStubResult" style="display: none">
+      <h2>Result</h2>
+      <p>Employee Name: <span id="displayedEmployeeName"></span></p>
+      <p>Salary or Wages Income: <span id="salaryIncome"></span></p>
+      <p>Vacation Pay: <span id="vacationPay"></span></p>
+      <p>Total Cash Income: <span id="totalCashIncome"></span></p>
+      <p>Pensionable Earnings: <span id="pensionableEarnings"></span></p>
+      <p>Insurable Earnings: <span id="insurableEarnings"></span></p>
+      <p>Federal Tax Deduction: <span id="federalTax"></span></p>
+      <p>Provincial Tax Deduction: <span id="provincialTax"></span></p>
+      <p>Total Tax Deduction: <span id="totalTax"></span></p>
+      <p>CPP Deductions: <span id="cppDeductions"></span></p>
+      <p>EI Deductions: <span id="eiDeductions"></span></p>
+      <p>Total Deductions: <span id="totalDeductions"></span></p>
+      <p>Net Amount: <span id="netAmount"></span></p>
+    </div>
+    <script src="paystubgenerator.js"></script>
+  </body>
+</html>
