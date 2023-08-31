@@ -113,11 +113,6 @@ function calculatepay() {
   // employer ei + employee ei (https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/payroll/payroll-deductions-contributions/employment-insurance-ei/ei-premium-rate-maximum.html)
   eiDeductions = 1.4 * insurableEarnings + insurableEarnings;
 
-  totalTax = annualFederalTaxPayable + provincialTax;
-  totalDeductions = totalTax + cppDeductions + eiDeductions;
-
-  netAmount = totalCashIncome - totalDeductions;
-
   employerContributions = 1.4 * insurableEarnings + cppDeductions;
 
   // annual taxable income formulas
@@ -170,7 +165,7 @@ function calculatepay() {
   // basic federal tax formulas
   CEA = 1368;
   PM = 1; // REVIEW: The total number of months during which CPP and/or QPP contributions are required to be deducted
-  K1 = 0.15 * federalClaimTD1;
+  K1 = 0.15 * federalClaimAmountTD1;
   K2 =
     0.15 * (payPeriods * cppDeductions * (0.0495 / 0.0595) * (PM / 12)) +
     0.15 * (payPeriods * eiDeductions);
@@ -184,6 +179,12 @@ function calculatepay() {
     basicFederalTax - payPeriods * federalLabourSponsoredFundsTaxCredit;
 
   provincialTax = 200;
+
+  totalTax = annualFederalTaxPayable + provincialTax;
+
+  totalDeductions = totalTax + cppDeductions + eiDeductions;
+
+  netAmount = totalCashIncome - totalDeductions;
 
   // Display the results
   document.getElementById("displayedEmployeeName").textContent = name;
