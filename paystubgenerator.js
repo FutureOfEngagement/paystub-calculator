@@ -1,11 +1,6 @@
 document
   .getElementById("calculateButton")
   .addEventListener("click", function () {
-    const yearsMaximumPensionableEarnings = 66600; // (https://www.canada.ca/en/revenue-agency/services/tax/registered-plans-administrators/pspa/mp-rrsp-dpsp-tfsa-limits-ympe.html)
-    const maximumAnnualInsurableEarnings = 61500; // (https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/payroll/payroll-deductions-contributions/employment-insurance-ei/ei-premium-rates-maximums.html)
-    const yearBasicExemption = 3500; // (https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/payroll/payroll-deductions-contributions/canada-pension-plan-cpp/cpp-contribution-rates-maximums-exemptions.html)
-    const payPeriods = 12;
-
     const name = document.getElementById("employeeName").value;
     const position = document.getElementById("position").value;
     const hoursWorked = parseFloat(
@@ -20,7 +15,11 @@ document
       vacationPay,
       totalCashIncome,
       pensionableEarnings,
-      insurableEarnings;
+      insurableEarnings,
+      yearsMaximumPensionableEarnings,
+      maximumAnnualInsurableEarnings,
+      yearBasicExemption,
+      payPeriods;
 
     // tax related variables
     let provincialTax,
@@ -46,6 +45,12 @@ document
 
     // annual federal tax payable variables
     let annualFederalTaxPayable, federalLabourSponsoredFundsTaxCredit;
+
+    // income constants
+    yearsMaximumPensionableEarnings = 66600; // (https://www.canada.ca/en/revenue-agency/services/tax/registered-plans-administrators/pspa/mp-rrsp-dpsp-tfsa-limits-ympe.html)
+    maximumAnnualInsurableEarnings = 61500; // (https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/payroll/payroll-deductions-contributions/employment-insurance-ei/ei-premium-rates-maximums.html)
+    yearBasicExemption = 3500; // (https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/payroll/payroll-deductions-contributions/canada-pension-plan-cpp/cpp-contribution-rates-maximums-exemptions.html)
+    payPeriods = 12;
 
     // income related formulas
     switch (position) {
@@ -114,12 +119,6 @@ document
     netAmount = totalCashIncome - totalDeductions;
 
     employerContributions = 1.4 * insurableEarnings + cppDeductions;
-
-    //pay period, total tax claim amount td1 and td1 provinc - pre-filled/initi minimum amount, remit this amount to cra, employer contributionst to ei/cpp (same as employee) - diff colour,
-    // scoping - function vs arrow function javascript
-    // cases, switches - done
-    // federal tax formula - done
-    // model view controller architecture
 
     // annual taxable income formulas
     employeeRetirementContributions = 0;
@@ -216,3 +215,10 @@ document
     // Show the results
     document.getElementById("payStubResult").style.display = "block";
   });
+
+// to do
+// pay period, total tax claim amount td1 and td1 provinc - pre-filled/initi minimum amount, remit this amount to cra, employer contributionst to ei/cpp (same as employee) - diff colour,
+// scoping - function vs arrow function javascript
+// cases, switches - done
+// federal tax formula - done
+// model view controller architecture
