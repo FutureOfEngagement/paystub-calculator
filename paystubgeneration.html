@@ -28,12 +28,24 @@
     </select>
     <label for="hoursWorkedLabel">Hours Worked: </label>
     <input type="text" id="hoursWorked" />
+    <label for="federalClaimTD1Label">Federal Amount from TD1: </label>
+    <input type="text" id="federalClaimTD1" value="15000" />
+    <label for="provincialClaimTD1Label">Provincial Amount from TD1: </label>
+    <input type="text" id="provincialClaimTD1" />
 
     <button class="calculateButton" id="calculateButton">Calculate Pay</button>
 
     <div id="payStubResult" style="display: none">
       <h2>Result</h2>
       <p>Employee Name: <span id="displayedEmployeeName"></span></p>
+      <p>
+        Pay Period frequency:
+        <span id="displayedPayPeriodFrequency">Monthly</span>
+      </p>
+      <p>
+        Federal Amount from TD1:
+        <span id="displayedfederalClaimTD1"></span>
+      </p>
       <p>Salary or Wages Income: <span id="salaryIncome"></span></p>
       <p>Vacation Pay: <span id="vacationPay"></span></p>
       <p>Total Cash Income: <span id="totalCashIncome"></span></p>
@@ -46,6 +58,9 @@
       <p>EI Deductions: <span id="eiDeductions"></span></p>
       <p>Total Deductions: <span id="totalDeductions"></span></p>
       <p>Net Amount: <span id="netAmount"></span></p>
+      <p>
+        Remit this amount to the CRA: <span id="employerContributions"></span>
+      </p>
     </div>
     <script src="paystubgenerator.js"></script>
   </body>
