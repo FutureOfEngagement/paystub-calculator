@@ -127,8 +127,9 @@ function calculatepay() {
   unionDues = 0;
   prescribedZoneDeduction = 0;
   authorizedAnnualDeductions = 0;
+  annualTaxableIncome = totalCashIncome; // REVIEW
 
-  // federal r and k formulas
+  // federal r and k formulas - *convert into if statements
   switch (true) {
     case annualTaxableIncome >= 0 && annualTaxableIncome < 53360:
       federalR = 0.15;
@@ -178,8 +179,6 @@ function calculatepay() {
 
   basicFederalTax =
     federalR * annualTaxableIncome - federalK - K1 - K2 - K3 - K4;
-
-  console.log(K2);
 
   annualFederalTaxPayable =
     basicFederalTax - payPeriods * federalLabourSponsoredFundsTaxCredit;
