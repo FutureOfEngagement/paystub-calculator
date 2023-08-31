@@ -3,12 +3,11 @@ document
   .addEventListener("click", calculatepay);
 
 function calculatepay() {
-  console.log("here");
   const name = document.getElementById("employeeName").value;
   const position = document.getElementById("position").value;
   let hoursWorked = parseFloat(document.getElementById("hoursWorked").value);
   let federalClaimAmountTD1 = document.getElementById("federalClaimTD1").value;
-  federalClaimAmountTD1 = parsFloat(federalClaimAmountTD1);
+  federalClaimAmountTD1 = parseFloat(federalClaimAmountTD1);
 
   // income related variables
   let hourlyRate,
@@ -129,16 +128,6 @@ function calculatepay() {
   prescribedZoneDeduction = 0;
   authorizedAnnualDeductions = 0;
 
-  // basic federal tax formulas
-  CEA = 1368;
-  PM = 1; // REVIEW: The total number of months during which CPP and/or QPP contributions are required to be deducted
-  K1 = 0.15 * federalClaimTD1;
-  K2 = [
-    0.15 * (payPeriods * cppDeductions * (0.0495 / 0.0595) * (PM / 12)) +
-      0.15 * (payPeriods * eiDeductions),
-  ];
-  K4 = Math.min(0.15 * annualTaxableIncome, 0.15 * CEA);
-
   // federal r and k formulas
   switch (true) {
     case annualTaxableIncome >= 0 && annualTaxableIncome < 53360:
@@ -177,8 +166,20 @@ function calculatepay() {
     prescribedZoneDeduction -
     authorizedAnnualDeductions;
 
+  // basic federal tax formulas
+  CEA = 1368;
+  PM = 1; // REVIEW: The total number of months during which CPP and/or QPP contributions are required to be deducted
+  K1 = 0.15 * federalClaimTD1;
+  K2 =
+    0.15 * (payPeriods * cppDeductions * (0.0495 / 0.0595) * (PM / 12)) +
+    0.15 * (payPeriods * eiDeductions);
+  K3 = 0;
+  K4 = Math.min(0.15 * annualTaxableIncome, 0.15 * CEA);
+
   basicFederalTax =
     federalR * annualTaxableIncome - federalK - K1 - K2 - K3 - K4;
+
+  console.log(K2);
 
   annualFederalTaxPayable =
     basicFederalTax - payPeriods * federalLabourSponsoredFundsTaxCredit;
