@@ -97,7 +97,7 @@ function calculatepay() {
 
   insurableEarnings = Math.min(
     totalCashIncome,
-    maximumAnnualInsurableEarnings / pensionableEarnings
+    maximumAnnualInsurableEarnings / payPeriods
   );
 
   // https://www.canada.ca/en/revenue-agency/services/forms-publications/payroll/t4127-payroll-deductions-formulas/t4127-jan/t4127-jan-payroll-deductions-formulas-computer-programs.html#toc59
@@ -112,6 +112,9 @@ function calculatepay() {
 
   // employer ei + employee ei (https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/payroll/payroll-deductions-contributions/employment-insurance-ei/ei-premium-rate-maximum.html)
   eiDeductions = 1.4 * insurableEarnings + insurableEarnings;
+  // employee only
+  // 0.163 * insurableEarnings
+  // employer - 1.4 * ^
 
   employerContributions = 1.4 * insurableEarnings + cppDeductions;
 
@@ -122,7 +125,12 @@ function calculatepay() {
   unionDues = 0;
   prescribedZoneDeduction = 0;
   authorizedAnnualDeductions = 0;
-  annualTaxableIncome = totalCashIncome; // REVIEW
+  annualTaxableIncome =
+    payPeriods * (totalCashIncome - (cppDeductions * 0.01) / 0.0595);
+  console.log("Total Cash Income = " + totalCashIncome);
+  console.log("CPP = " + cppDeductions);
+  console.log("Annual Taxable Income = " + annualTaxableIncome);
+  console.log((2329.6 - (121.26 * 0.01) / 0.0595) * 12);
 
   // federal r and k formulas - *convert into if statements
   switch (true) {
@@ -154,13 +162,14 @@ function calculatepay() {
   // federal tax calculations
   annualTaxableIncome =
     payPeriods *
-      (salaryIncome -
+      (totalCashIncome -
         employeeRetirementContributions -
         alimonyPayments1997 -
         cppAdditionalContributions -
         unionDues) -
     prescribedZoneDeduction -
     authorizedAnnualDeductions;
+  // F5 review
 
   // basic federal tax formulas
   CEA = 1368;
@@ -171,6 +180,8 @@ function calculatepay() {
     0.15 * (payPeriods * eiDeductions);
   K3 = 0;
   K4 = Math.min(0.15 * annualTaxableIncome, 0.15 * CEA);
+
+  console.log((2329.6 - (121.26 * 0.01) / 0.0595) * 12);
 
   basicFederalTax =
     federalR * annualTaxableIncome - federalK - K1 - K2 - K3 - K4;
