@@ -2,58 +2,48 @@ document
   .getElementById("calculateButton")
   .addEventListener("click", calculatepay);
 
-function calculatepay() {
-  const name = document.getElementById("employeeName").value;
-  const position = document.getElementById("position").value;
-  let hoursWorked = parseFloat(document.getElementById("hoursWorked").value);
-  let federalClaimAmountTD1 = document.getElementById("federalClaimTD1").value;
+//#region CONSTANTS
+
+let yearsMaximumPensionableEarnings,
+  maximumAnnualInsurableEarnings,
+  yearBasicExemption,
+  payPeriods;
+
+// income constants
+yearsMaximumPensionableEarnings = 66600; // (https://www.canada.ca/en/revenue-agency/services/tax/registered-plans-administrators/pspa/mp-rrsp-dpsp-tfsa-limits-ympe.html)
+maximumAnnualInsurableEarnings = 61500; // (https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/payroll/payroll-deductions-contributions/employment-insurance-ei/ei-premium-rates-maximums.html)
+yearBasicExemption = 3500; // (https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/payroll/payroll-deductions-contributions/canada-pension-plan-cpp/cpp-contribution-rates-maximums-exemptions.html)
+payPeriods = 12;
+
+//#endregion
+
+//#region GET INPUTS FROM HTML FILE
+// GET INPUTS
+let employeeName, employeePosition, hoursWorked, federalClaimAmountTD1;
+
+function getInputs() {
+  employeeName = document.getElementById("employeeName").value;
+  employeePosition = document.getElementById("position").value;
+  hoursWorked = parseFloat(document.getElementById("hoursWorked").value);
+  federalClaimAmountTD1 = document.getElementById("federalClaimTD1").value;
   federalClaimAmountTD1 = parseFloat(federalClaimAmountTD1);
+  console.info("Got inputs from HTML");
+}
 
-  // income related variables
-  let hourlyRate,
-    salaryIncome,
-    vacationPay,
-    totalCashIncome,
-    pensionableEarnings,
-    insurableEarnings,
-    yearsMaximumPensionableEarnings,
-    maximumAnnualInsurableEarnings,
-    yearBasicExemption,
-    payPeriods;
+//#endregion
 
-  // tax related variables
-  let provincialTax,
-    totalTax,
-    cppDeductions,
-    yearToDateCPP,
-    eiDeductions,
-    totalDeductions,
-    netAmount,
-    employerContributions;
+//#region INCOME
 
-  // annual taxable income related variables
-  let annualTaxableIncome,
-    employeeRetirementContributions,
-    alimonyPayments1997,
-    cppAdditionalContributions,
-    unionDues,
-    prescribedZoneDeduction,
-    authorizedAnnualDeductions;
+// income related variables
+let hourlyRate,
+  salaryIncome,
+  vacationPay,
+  totalCashIncome,
+  pensionableEarnings,
+  insurableEarnings;
 
-  // basic federal tax variables
-  let basicFederalTax, federalR, federalK, K1, K2, K3, K4;
-
-  // annual federal tax payable variables
-  let annualFederalTaxPayable, federalLabourSponsoredFundsTaxCredit;
-
-  // income constants
-  yearsMaximumPensionableEarnings = 66600; // (https://www.canada.ca/en/revenue-agency/services/tax/registered-plans-administrators/pspa/mp-rrsp-dpsp-tfsa-limits-ympe.html)
-  maximumAnnualInsurableEarnings = 61500; // (https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/payroll/payroll-deductions-contributions/employment-insurance-ei/ei-premium-rates-maximums.html)
-  yearBasicExemption = 3500; // (https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/payroll/payroll-deductions-contributions/canada-pension-plan-cpp/cpp-contribution-rates-maximums-exemptions.html)
-  payPeriods = 12;
-
-  // income related formulas
-  switch (position) {
+function calculateIncomeVariables() {
+  switch (employeePosition) {
     case "fundraising":
       hourlyRate = 16.5;
       break;
@@ -100,6 +90,21 @@ function calculatepay() {
     maximumAnnualInsurableEarnings / payPeriods
   );
 
+  console.info("Income Variables Calculated");
+}
+
+//#endregion
+
+//#region TAX (general)
+
+// tax related variables
+let provincialTax,
+  cppDeductions,
+  yearToDateCPP,
+  eiDeductions,
+  employerContributions;
+
+function calculateGeneralTax() {
   // https://www.canada.ca/en/revenue-agency/services/forms-publications/payroll/t4127-payroll-deductions-formulas/t4127-jan/t4127-jan-payroll-deductions-formulas-computer-programs.html#toc59
   yearToDateCPP = 100; // database calc
   const CPPi = 3754.45 * (pensionableEarnings / payPeriods) - yearToDateCPP; // convert into variable
@@ -118,6 +123,25 @@ function calculatepay() {
 
   employerContributions = 1.4 * insurableEarnings + cppDeductions;
 
+  provincialTax = 200; // Setting it temporarily
+
+  console.info("General Tax Calculated");
+}
+
+//#endregion
+
+//#region ANNUAL TAXABLE INCOME
+
+// annual taxable income related variables
+let annualTaxableIncome,
+  employeeRetirementContributions,
+  alimonyPayments1997,
+  cppAdditionalContributions,
+  unionDues,
+  prescribedZoneDeduction,
+  authorizedAnnualDeductions;
+
+function calculateAnnualTaxableIncome() {
   // annual taxable income formulas
   employeeRetirementContributions = 0;
   alimonyPayments1997 = 0;
@@ -127,11 +151,27 @@ function calculatepay() {
   authorizedAnnualDeductions = 0;
   annualTaxableIncome =
     payPeriods * (totalCashIncome - (cppDeductions * 0.01) / 0.0595);
-  console.log("Total Cash Income = " + totalCashIncome);
-  console.log("CPP = " + cppDeductions);
-  console.log("Annual Taxable Income = " + annualTaxableIncome);
-  console.log((2329.6 - (121.26 * 0.01) / 0.0595) * 12);
 
+  console.info("Annual Taxable Income Calculated");
+
+  // console.log("Total Cash Income = " + totalCashIncome);
+  // console.log("CPP = " + cppDeductions);
+  // console.log("Annual Taxable Income = " + annualTaxableIncome);
+  // console.log((2329.6 - (121.26 * 0.01) / 0.0595) * 12);
+}
+
+//#endregion
+
+//#region BASIC AND ANNUAL FEDERAL TAX
+
+// basic federal tax variables
+let basicFederalTax, federalR, federalK, K1, K2, K3, K4;
+
+// annual federal tax payable variables
+let annualFederalTaxPayable, federalLabourSponsoredFundsTaxCredit;
+federalLabourSponsoredFundsTaxCredit = 750; //Remains Constant
+
+function calculateBasicAndAnnualTax() {
   // federal r and k formulas - *convert into if statements
   switch (true) {
     case annualTaxableIncome >= 0 && annualTaxableIncome < 53360:
@@ -156,9 +196,6 @@ function calculatepay() {
       break;
   }
 
-  // annual federal tax payable formulas
-  federalLabourSponsoredFundsTaxCredit = 750;
-
   // federal tax calculations
   annualTaxableIncome =
     payPeriods *
@@ -172,8 +209,8 @@ function calculatepay() {
   // F5 review
 
   // basic federal tax formulas
-  CEA = 1368;
-  PM = 1; // REVIEW: The total number of months during which CPP and/or QPP contributions are required to be deducted
+  const CEA = 1368;
+  const PM = 1; // REVIEW: The total number of months during which CPP and/or QPP contributions are required to be deducted
   K1 = 0.15 * federalClaimAmountTD1;
   K2 =
     0.15 * (payPeriods * cppDeductions * (0.0495 / 0.0595) * (PM / 12)) +
@@ -181,7 +218,7 @@ function calculatepay() {
   K3 = 0;
   K4 = Math.min(0.15 * annualTaxableIncome, 0.15 * CEA);
 
-  console.log((2329.6 - (121.26 * 0.01) / 0.0595) * 12);
+  // console.log((2329.6 - (121.26 * 0.01) / 0.0595) * 12);
 
   basicFederalTax =
     federalR * annualTaxableIncome - federalK - K1 - K2 - K3 - K4;
@@ -189,16 +226,16 @@ function calculatepay() {
   annualFederalTaxPayable =
     basicFederalTax - payPeriods * federalLabourSponsoredFundsTaxCredit;
 
-  provincialTax = 200;
+  console.info("Calculated Basic and Annual Federal Tax");
+}
 
-  totalTax = annualFederalTaxPayable + provincialTax;
+//#endregion
 
-  totalDeductions = totalTax + cppDeductions + eiDeductions;
+//#region DISPLAY RESULTS
 
-  netAmount = totalCashIncome - totalDeductions;
-
+function displayResults(totalTax, totalDeductions, netAmount) {
   // Display the results
-  document.getElementById("displayedEmployeeName").textContent = name;
+  document.getElementById("displayedEmployeeName").textContent = employeeName;
   document.getElementById("displayedfederalClaimTD1").textContent =
     federalClaimAmountTD1.toFixed(2);
   document.getElementById("salaryIncome").textContent = salaryIncome.toFixed(2);
@@ -225,6 +262,25 @@ function calculatepay() {
 
   // Show the results
   document.getElementById("payStubResult").style.display = "block";
+}
+
+//#endregion
+
+function calculatepay() {
+  getInputs();
+  calculateIncomeVariables();
+  calculateGeneralTax();
+  calculateAnnualTaxableIncome();
+  calculateBasicAndAnnualTax();
+
+  let totalTax, totalDeductions, netAmount;
+  totalTax = annualFederalTaxPayable + provincialTax;
+
+  totalDeductions = totalTax + cppDeductions + eiDeductions;
+
+  netAmount = totalCashIncome - totalDeductions;
+
+  displayResults(totalTax, totalDeductions, netAmount);
 }
 
 // to do
