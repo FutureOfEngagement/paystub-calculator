@@ -4,63 +4,123 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pay Stub Generator</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
     <link rel="stylesheet" href="styles.css" />
+    <title>Pay Stub Generator</title>
   </head>
   <body>
-    <h1>Pay Stub Generator</h1>
-    <label for="employeeNameLabel">Employee Name:</label>
-    <input type="text" id="employeeName" />
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-md-7">
+          <h1>Pay Stub Calculator</h1>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <form>
+            <div class="form-group">
+              <label for="employeeName">Employee Name:</label>
+              <input type="text" class="form-control" id="employeeName" />
+            </div>
+            <div class="form-group">
+              <label for="position">Choose a position:</label>
+              <select class="form-control" id="position">
+                <option value="fundraising">Fundraising</option>
+                <option value="softwareDeveloper">Software Developer</option>
+                <option value="researchSupport">Research Support</option>
+                <option value="socialMedia">Social Media</option>
+                <option value="commCoordinator">Comm Coordinator</option>
+                <option value="commOrganizer">Comm Organizer</option>
+                <option value="editor">Editor</option>
+                <option value="director">Director</option>
+                <option value="rso">RSO</option>
+                <option value="interiorDesigner">Interior Designer</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="hoursWorked">Hours Worked:</label>
+              <input type="text" class="form-control" id="hoursWorked" />
+            </div>
+            <div class="form-group">
+              <label for="federalClaimTD1">Federal Amount from TD1:</label>
+              <input
+                type="text"
+                class="form-control"
+                id="federalClaimTD1"
+                value="15000"
+              />
+            </div>
+            <div class="form-group">
+              <label for="provincialClaimTD1"
+                >Provincial Amount from TD1:</label
+              >
+              <input
+                type="text"
+                class="form-control"
+                id="provincialClaimTD1"
+                value="11865"
+              />
+            </div>
+            <button class="btn btn-primary" id="calculateButton">
+              Calculate Pay
+            </button>
+          </form>
+        </div>
 
-    <label for="positionLabel">Choose a position:</label>
-
-    <select name="position" id="position">
-      <option value="fundraising">Fundraising</option>
-      <option value="softwareDeveloper">Software Developer</option>
-      <option value="researchSupport">Research Support</option>
-      <option value="socialMedia">Social Media</option>
-      <option value="commCoordinator">Comm Coordinator</option>
-      <option value="commOrganizer">Comm Organizer</option>
-      <option value="editor">Editor</option>
-      <option value="director">Director</option>
-      <option value="rso">RSO</option>
-      <option value="interiorDesigner">Interior Designer</option>
-    </select>
-    <label for="hoursWorkedLabel">Hours Worked: </label>
-    <input type="text" id="hoursWorked" />
-    <label for="federalClaimTD1Label">Federal Amount from TD1: </label>
-    <input type="text" id="federalClaimTD1" value="15000" />
-    <label for="provincialClaimTD1Label">Provincial Amount from TD1: </label>
-    <input type="text" id="provincialClaimTD1" />
-
-    <button class="calculateButton" id="calculateButton">Calculate Pay</button>
-
-    <div id="payStubResult" style="display: none">
-      <h2>Result</h2>
-      <p>Employee Name: <span id="displayedEmployeeName"></span></p>
-      <p>
-        Pay Period Frequency:
-        <span id="displayedPayPeriodFrequency">Monthly</span>
-      </p>
-      <p>
-        Federal Amount from TD1:
-        <span id="displayedfederalClaimTD1"></span>
-      </p>
-      <p>Salary or Wages Income: <span id="salaryIncome"></span></p>
-      <p>Vacation Pay: <span id="vacationPay"></span></p>
-      <p>Total Cash Income: <span id="totalCashIncome"></span></p>
-      <p>Pensionable Earnings: <span id="pensionableEarnings"></span></p>
-      <p>Insurable Earnings: <span id="insurableEarnings"></span></p>
-      <p>Federal Tax Deduction: <span id="federalTax"></span></p>
-      <p>Provincial Tax Deduction: <span id="provincialTax"></span></p>
-      <p>Total Tax Deduction: <span id="totalTax"></span></p>
-      <p>CPP Deductions: <span id="cppDeductions"></span></p>
-      <p>EI Deductions: <span id="eiDeductions"></span></p>
-      <p>Total Deductions: <span id="totalDeductions"></span></p>
-      <p>Net Amount: <span id="netAmount"></span></p>
-      <p>
-        Remit this amount to the CRA: <span id="employerContributions"></span>
-      </p>
+        <div class="col-md-7">
+          <section
+            class="payStubResult"
+            id="payStubResult"
+            style="display: none"
+          >
+            <h2>Result</h2>
+            <p>Employee's Name: <span id="displayedEmployeeName"></span></p>
+            <p>Employer's Name: Future of Engagement</p>
+            <p>
+              Pay Period Frequency:
+              <span id="displayedPayPeriodFrequency"
+                >Monthly (12 periods a year)</span
+              >
+            </p>
+            <p>
+              Date the employee is paid:
+              <span id="displayedPayDate">YYY-MM-DD</span>
+            </p>
+            <p>
+              Province of employment:
+              <span id="displayedProvinceOfEmployement">Ontario</span>
+            </p>
+            <p>
+              Federal Amount from TD1:
+              <span id="displayedfederalClaimTD1"></span>
+            </p>
+            <p>
+              <span class="heading">Salary or Wages Income: </span
+              ><span id="salaryIncome"></span>
+            </p>
+            <p>Vacation Pay: <span id="vacationPay"></span></p>
+            <p>Total Cash Income: <span id="totalCashIncome"></span></p>
+            <p>Pensionable Earnings: <span id="pensionableEarnings"></span></p>
+            <p>Insurable Earnings: <span id="insurableEarnings"></span></p>
+            <p>Federal Tax Deduction: <span id="federalTax"></span></p>
+            <p>Provincial Tax Deduction: <span id="provincialTax"></span></p>
+            <p>Total Tax Deduction: <span id="totalTax"></span></p>
+            <p>CPP Deductions: <span id="cppDeductions"></span></p>
+            <p>EI Deductions: <span id="eiDeductions"></span></p>
+            <p>Total Deductions: <span id="totalDeductions"></span></p>
+            <p>Net Amount: <span id="netAmount"></span></p>
+            <p>
+              Remit this amount to the CRA:
+              <span id="employerContributions"></span>
+            </p>
+          </section>
+        </div>
+      </div>
     </div>
     <script src="paystubgenerator.js"></script>
   </body>

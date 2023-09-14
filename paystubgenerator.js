@@ -102,7 +102,9 @@ let provincialTax,
   cppDeductions,
   yearToDateCPP,
   eiDeductions,
-  employerContributions;
+  eiEmployeeContributions,
+  eiEmployerContributions,
+  eiTotalContributions;
 
 function calculateGeneralTax() {
   // https://www.canada.ca/en/revenue-agency/services/forms-publications/payroll/t4127-payroll-deductions-formulas/t4127-jan/t4127-jan-payroll-deductions-formulas-computer-programs.html#toc59
@@ -117,11 +119,10 @@ function calculateGeneralTax() {
 
   // employer ei + employee ei (https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/payroll/payroll-deductions-contributions/employment-insurance-ei/ei-premium-rate-maximum.html)
   eiDeductions = 1.4 * insurableEarnings + insurableEarnings;
-  // employee only
-  // 0.163 * insurableEarnings
-  // employer - 1.4 * ^
 
-  employerContributions = 1.4 * insurableEarnings + cppDeductions;
+  eiEmployeeContributions = 0.163 * insurableEarnings;
+  eiEmployerContributions = 1.4 * eiEmployeeContributions;
+  eiTotalContributions = eiEmployeeContributions + eiEmployerContributions; //remit this amount to the CRA
 
   provincialTax = 200; // Setting it temporarily
 
@@ -169,31 +170,25 @@ let basicFederalTax, federalR, federalK, K1, K2, K3, K4;
 
 // annual federal tax payable variables
 let annualFederalTaxPayable, federalLabourSponsoredFundsTaxCredit;
-federalLabourSponsoredFundsTaxCredit = 750; //Remains Constant
+federalLabourSponsoredFundsTaxCredit = 750; // remains constant
 
 function calculateBasicAndAnnualTax() {
-  // federal r and k formulas - *convert into if statements
-  switch (true) {
-    case annualTaxableIncome >= 0 && annualTaxableIncome < 53360:
-      federalR = 0.15;
-      federalK = 0;
-      break;
-    case annualTaxableIncome >= 53360 && annualTaxableIncome < 106717:
-      federalR = 0.205;
-      federalK = 935;
-      break;
-    case (annualTaxableIncome >= 106717 && annualTaxableIncome < 165, 430):
-      federalR = 0.26;
-      (federalK = 8), 804;
-      break;
-    case (annualTaxableIncome >= 165, 430 && annualTaxableIncome < 235, 675):
-      federalR = 0.29;
-      (federalK = 13), 767;
-      break;
-    case annualTaxableIncome >= 235675:
-      federalR = 0.33;
-      federalK = 23194;
-      break;
+  // k and r calculations
+  if (annualTaxableIncome >= 0 && annualTaxableIncome < 53360) {
+    federalR = 0.15;
+    federalK = 0;
+  } else if (annualTaxableIncome >= 53360 && annualTaxableIncome < 106717) {
+    federalR = 0.205;
+    federalK = 935;
+  } else if (annualTaxableIncome >= 106717 && annualTaxableIncome < 165430) {
+    federalR = 0.26;
+    federalK = 8804;
+  } else if (annualTaxableIncome >= 165430 && annualTaxableIncome < 235675) {
+    federalR = 0.29;
+    federalK = 13767;
+  } else if (annualTaxableIncome >= 235675) {
+    federalR = 0.33;
+    federalK = 23194;
   }
 
   // federal tax calculations
@@ -217,8 +212,6 @@ function calculateBasicAndAnnualTax() {
     0.15 * (payPeriods * eiDeductions);
   K3 = 0;
   K4 = Math.min(0.15 * annualTaxableIncome, 0.15 * CEA);
-
-  // console.log((2329.6 - (121.26 * 0.01) / 0.0595) * 12);
 
   basicFederalTax =
     federalR * annualTaxableIncome - federalK - K1 - K2 - K3 - K4;
@@ -258,10 +251,11 @@ function displayResults(totalTax, totalDeductions, netAmount) {
     totalDeductions.toFixed(2);
   document.getElementById("netAmount").textContent = netAmount.toFixed(2);
   document.getElementById("employerContributions").textContent =
-    employerContributions.toFixed(2);
+    eiTotalContributions.toFixed(2);
 
   // Show the results
   document.getElementById("payStubResult").style.display = "block";
+  event.preventDefault(); // prevent the form from submitting
 }
 
 //#endregion
@@ -282,10 +276,3 @@ function calculatepay() {
 
   displayResults(totalTax, totalDeductions, netAmount);
 }
-
-// to do
-// pay period, total tax claim amount td1 and td1 provinc - pre-filled/initi minimum amount, remit this amount to cra, employer contributionst to ei/cpp (same as employee) - diff colour,
-// scoping - function vs arrow function javascript
-// cases, switches - done
-// federal tax formula - done
-// model view controller architecture
