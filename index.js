@@ -1,21 +1,32 @@
+import {
+  hourlyRate,
+  salaryIncome,
+  vacationPay,
+  totalCashIncome,
+  pensionableEarnings,
+  insurableEarnings,
+  calculateIncomeVariables,
+} from "./modules/income.js";
+
+import {
+  yearsMaximumPensionableEarnings,
+  maximumAnnualInsurableEarnings,
+  yearBasicExemption,
+  payPeriods,
+} from "./modules/constants.js";
+
+import {provincialTax,
+  cppDeductions,
+  yearToDateCPP,
+  eiDeductions,
+  eiEmployeeContributions,
+  eiEmployerContributions,
+  eiTotalContributions, calculateGeneralTax
+} from "./modules/tax.js";
+
 document
   .getElementById("calculateButton")
   .addEventListener("click", calculatepay);
-
-//#region CONSTANTS
-
-let yearsMaximumPensionableEarnings,
-  maximumAnnualInsurableEarnings,
-  yearBasicExemption,
-  payPeriods;
-
-// income constants
-yearsMaximumPensionableEarnings = 66600; // (https://www.canada.ca/en/revenue-agency/services/tax/registered-plans-administrators/pspa/mp-rrsp-dpsp-tfsa-limits-ympe.html)
-maximumAnnualInsurableEarnings = 61500; // (https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/payroll/payroll-deductions-contributions/employment-insurance-ei/ei-premium-rates-maximums.html)
-yearBasicExemption = 3500; // (https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/payroll/payroll-deductions-contributions/canada-pension-plan-cpp/cpp-contribution-rates-maximums-exemptions.html)
-payPeriods = 12;
-
-//#endregion
 
 //#region GET INPUTS FROM HTML FILE
 // GET INPUTS
@@ -32,104 +43,7 @@ function getInputs() {
 
 //#endregion
 
-//#region INCOME
 
-// income related variables
-let hourlyRate,
-  salaryIncome,
-  vacationPay,
-  totalCashIncome,
-  pensionableEarnings,
-  insurableEarnings;
-
-function calculateIncomeVariables() {
-  switch (employeePosition) {
-    case "fundraising":
-      hourlyRate = 16.5;
-      break;
-    case "softwareDeveloper":
-      hourlyRate = 16;
-      break;
-    case "researchSupport":
-      hourlyRate = 18;
-      break;
-    case "socialMedia":
-      hourlyRate = 16;
-      break;
-    case "commCoordinator":
-      hourlyRate = 16;
-      break;
-    case "commOrganizer":
-      hourlyRate = 15.5;
-      break;
-    case "editor":
-      hourlyRate = 15.5;
-      break;
-    case "director":
-      hourlyRate = 18;
-      break;
-    case "rso":
-      hourlyRate = 18;
-      break;
-    case "interiorDesigner":
-      hourlyRate = 15.25;
-      break;
-  }
-
-  salaryIncome = hourlyRate * hoursWorked;
-  vacationPay = 0.04 * salaryIncome;
-  totalCashIncome = salaryIncome + vacationPay;
-
-  pensionableEarnings = Math.min(
-    totalCashIncome,
-    yearsMaximumPensionableEarnings / payPeriods
-  );
-
-  insurableEarnings = Math.min(
-    totalCashIncome,
-    maximumAnnualInsurableEarnings / payPeriods
-  );
-
-  console.info("Income Variables Calculated");
-}
-
-//#endregion
-
-//#region TAX (general)
-
-// tax related variables
-let provincialTax,
-  cppDeductions,
-  yearToDateCPP,
-  eiDeductions,
-  eiEmployeeContributions,
-  eiEmployerContributions,
-  eiTotalContributions;
-
-function calculateGeneralTax() {
-  // https://www.canada.ca/en/revenue-agency/services/forms-publications/payroll/t4127-payroll-deductions-formulas/t4127-jan/t4127-jan-payroll-deductions-formulas-computer-programs.html#toc59
-  yearToDateCPP = 100; // database calc
-  const CPPi = 3754.45 * (pensionableEarnings / payPeriods) - yearToDateCPP; // convert into variable
-  const CPPii =
-    0.0595 * (pensionableEarnings - yearBasicExemption / payPeriods);
-  cppDeductions = Math.min(CPPi, CPPii);
-  if (cppDeductions < 0) {
-    cppDeductions = 0;
-  }
-
-  // employer ei + employee ei (https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/payroll/payroll-deductions-contributions/employment-insurance-ei/ei-premium-rate-maximum.html)
-  eiDeductions = 1.4 * insurableEarnings + insurableEarnings;
-
-  eiEmployeeContributions = 0.163 * insurableEarnings;
-  eiEmployerContributions = 1.4 * eiEmployeeContributions;
-  eiTotalContributions = eiEmployeeContributions + eiEmployerContributions; //remit this amount to the CRA
-
-  provincialTax = 200; // Setting it temporarily
-
-  console.info("General Tax Calculated");
-}
-
-//#endregion
 
 //#region ANNUAL TAXABLE INCOME
 
@@ -232,6 +146,8 @@ function displayResults(totalTax, totalDeductions, netAmount) {
   document.getElementById("displayedfederalClaimTD1").textContent =
     federalClaimAmountTD1.toFixed(2);
   document.getElementById("salaryIncome").textContent = salaryIncome.toFixed(2);
+  console.log(salaryIncome)
+  console.log(typeof salaryIncome)
   document.getElementById("vacationPay").textContent = vacationPay.toFixed(2);
   document.getElementById("totalCashIncome").textContent =
     totalCashIncome.toFixed(2);
@@ -262,8 +178,8 @@ function displayResults(totalTax, totalDeductions, netAmount) {
 
 function calculatepay() {
   getInputs();
-  calculateIncomeVariables();
-  calculateGeneralTax();
+  calculateIncomeVariables(employeePosition, hoursWorked);
+  calculateGeneralTax(pensionableEarnings, insurableEarnings);
   calculateAnnualTaxableIncome();
   calculateBasicAndAnnualTax();
 
