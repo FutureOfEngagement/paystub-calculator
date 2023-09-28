@@ -36,11 +36,13 @@ function calculateGeneralTax(pensionableEarnings, insurableEarnings) {
 
 //#endregion
 
-export {provincialTax,
-    cppDeductions,
-    yearToDateCPP,
-    eiDeductions,
-    eiEmployeeContributions,
-    eiEmployerContributions,
-    eiTotalContributions, calculateGeneralTax
+export {
+  provincialTax,
+  cppDeductions,
+  yearToDateCPP,
+  eiDeductions,
+  eiEmployeeContributions,
+  eiEmployerContributions,
+  eiTotalContributions,
+  calculateGeneralTax,
 };

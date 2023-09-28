@@ -15,14 +15,27 @@ import {
   payPeriods,
 } from "./modules/constants.js";
 
-import {provincialTax,
+import {
+  provincialTax,
   cppDeductions,
   yearToDateCPP,
   eiDeductions,
   eiEmployeeContributions,
   eiEmployerContributions,
-  eiTotalContributions, calculateGeneralTax
-} from "./modules/tax.js";
+  eiTotalContributions,
+  calculateGeneralTax,
+} from "./modules/generalTax.js";
+
+import {
+  annualTaxableIncome,
+  employeeRetirementContributions,
+  alimonyPayments1997,
+  cppAdditionalContributions,
+  unionDues,
+  prescribedZoneDeduction,
+  authorizedAnnualDeductions,
+  calculateAnnualTaxableIncome,
+} from "./modules/annualTaxableIncome.js";
 
 document
   .getElementById("calculateButton")
@@ -39,40 +52,6 @@ function getInputs() {
   federalClaimAmountTD1 = document.getElementById("federalClaimTD1").value;
   federalClaimAmountTD1 = parseFloat(federalClaimAmountTD1);
   console.info("Got inputs from HTML");
-}
-
-//#endregion
-
-
-
-//#region ANNUAL TAXABLE INCOME
-
-// annual taxable income related variables
-let annualTaxableIncome,
-  employeeRetirementContributions,
-  alimonyPayments1997,
-  cppAdditionalContributions,
-  unionDues,
-  prescribedZoneDeduction,
-  authorizedAnnualDeductions;
-
-function calculateAnnualTaxableIncome() {
-  // annual taxable income formulas
-  employeeRetirementContributions = 0;
-  alimonyPayments1997 = 0;
-  cppAdditionalContributions = cppDeductions * (0.01 / 0.0595);
-  unionDues = 0;
-  prescribedZoneDeduction = 0;
-  authorizedAnnualDeductions = 0;
-  annualTaxableIncome =
-    payPeriods * (totalCashIncome - (cppDeductions * 0.01) / 0.0595);
-
-  console.info("Annual Taxable Income Calculated");
-
-  // console.log("Total Cash Income = " + totalCashIncome);
-  // console.log("CPP = " + cppDeductions);
-  // console.log("Annual Taxable Income = " + annualTaxableIncome);
-  // console.log((2329.6 - (121.26 * 0.01) / 0.0595) * 12);
 }
 
 //#endregion
@@ -105,7 +84,7 @@ function calculateBasicAndAnnualTax() {
     federalK = 23194;
   }
 
-  // federal tax calculations
+  /* federal tax calculations
   annualTaxableIncome =
     payPeriods *
       (totalCashIncome -
@@ -115,11 +94,11 @@ function calculateBasicAndAnnualTax() {
         unionDues) -
     prescribedZoneDeduction -
     authorizedAnnualDeductions;
-  // F5 review
+   F5 review */
 
   // basic federal tax formulas
   const CEA = 1368;
-  const PM = 1; // REVIEW: The total number of months during which CPP and/or QPP contributions are required to be deducted
+  const PM = 12; // REVIEW: The total number of months during which CPP and/or QPP contributions are required to be deducted
   K1 = 0.15 * federalClaimAmountTD1;
   K2 =
     0.15 * (payPeriods * cppDeductions * (0.0495 / 0.0595) * (PM / 12)) +
@@ -146,8 +125,8 @@ function displayResults(totalTax, totalDeductions, netAmount) {
   document.getElementById("displayedfederalClaimTD1").textContent =
     federalClaimAmountTD1.toFixed(2);
   document.getElementById("salaryIncome").textContent = salaryIncome.toFixed(2);
-  console.log(salaryIncome)
-  console.log(typeof salaryIncome)
+  console.log(salaryIncome);
+  console.log(typeof salaryIncome);
   document.getElementById("vacationPay").textContent = vacationPay.toFixed(2);
   document.getElementById("totalCashIncome").textContent =
     totalCashIncome.toFixed(2);
@@ -180,7 +159,7 @@ function calculatepay() {
   getInputs();
   calculateIncomeVariables(employeePosition, hoursWorked);
   calculateGeneralTax(pensionableEarnings, insurableEarnings);
-  calculateAnnualTaxableIncome();
+  calculateAnnualTaxableIncome(cppDeductions, totalCashIncome);
   calculateBasicAndAnnualTax();
 
   let totalTax, totalDeductions, netAmount;
