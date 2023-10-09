@@ -1,13 +1,13 @@
 import {
   yearsMaximumPensionableEarnings,
   maximumAnnualInsurableEarnings,
-  payPeriods,
+  payPeriods, hourlyRate
 } from "./constants.js";
 
 //#region INCOME
 
 // income related variables
-let hourlyRate,
+let rate,
   salaryIncome,
   vacationPay,
   totalCashIncome,
@@ -15,40 +15,9 @@ let hourlyRate,
   insurableEarnings;
 
 function calculateIncomeVariables(employeePosition, hoursWorked) {
-  switch (employeePosition) {
-    case "fundraising":
-      hourlyRate = 16.5;
-      break;
-    case "softwareDeveloper":
-      hourlyRate = 16;
-      break;
-    case "researchSupport":
-      hourlyRate = 18;
-      break;
-    case "socialMedia":
-      hourlyRate = 16;
-      break;
-    case "commCoordinator":
-      hourlyRate = 16;
-      break;
-    case "commOrganizer":
-      hourlyRate = 15.5;
-      break;
-    case "editor":
-      hourlyRate = 15.5;
-      break;
-    case "director":
-      hourlyRate = 18;
-      break;
-    case "rso":
-      hourlyRate = 18;
-      break;
-    case "interiorDesigner":
-      hourlyRate = 15.25;
-      break;
-  }
+ rate = hourlyRate[employeePosition]
 
-  salaryIncome = hourlyRate * hoursWorked;
+  salaryIncome = rate * hoursWorked;
   vacationPay = 0.04 * salaryIncome;
   totalCashIncome = salaryIncome + vacationPay;
 
@@ -68,7 +37,6 @@ function calculateIncomeVariables(employeePosition, hoursWorked) {
 //#endregion
 
 export {
-  hourlyRate,
   salaryIncome,
   vacationPay,
   totalCashIncome,

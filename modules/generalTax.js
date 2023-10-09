@@ -46,3 +46,15 @@ export {
   eiTotalContributions,
   calculateGeneralTax,
 };
+
+ /* federal tax calculations
+  annualTaxableIncome =
+    payPeriods *
+      (totalCashIncome -
+        employeeRetirementContributions -
+        alimonyPayments1997 -
+        cppAdditionalContributions -
+        unionDues) -
+    prescribedZoneDeduction -
+    authorizedAnnualDeductions;
+   F5 review */
